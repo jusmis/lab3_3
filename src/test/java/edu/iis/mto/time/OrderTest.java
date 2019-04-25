@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 
 public class OrderTest {
-    
+
     @Test(expected = OrderExpiredException.class)
     public void shouldThrowOrderExpiredExceptionAfterOrderHasExpired(){
 
@@ -15,6 +15,14 @@ public class OrderTest {
 
         Clock systemClock = Clock.system(ZoneId.systemDefault());
         Order order = new Order(Clock.offset(systemClock, Duration.ofHours(-OVER_VALID_PERIOD_HOURS)));
+        order.submit();
+        order.confirm();
+    }
+
+    @Test
+    public void shouldConfirmWhenOrderDidNotExpired(){
+
+        Order order = new Order(Clock.system(ZoneId.systemDefault()));
         order.submit();
         order.confirm();
     }

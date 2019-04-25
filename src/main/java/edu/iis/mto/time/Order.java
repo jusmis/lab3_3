@@ -1,5 +1,6 @@
 package edu.iis.mto.time;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +12,11 @@ public class Order {
 	private State orderState;
 	private List<OrderItem> items = new ArrayList<OrderItem>();
 	private DateTime subbmitionDate;
+	private Clock clock;
 
-	public Order() {
+	public Order(Clock clock) {
 		orderState = State.CREATED;
+		this.clock = clock;
 	}
 
 	public void addItem(OrderItem item) {
@@ -24,12 +27,11 @@ public class Order {
 
 	}
 
-	public void submit() {
+	public void submit(){
 		requireState(State.CREATED);
 
 		orderState = State.SUBMITTED;
-		subbmitionDate = new DateTime();
-
+		subbmitionDate = DateTime.parse(this.clock.instant().toString());
 	}
 
 	public void confirm() {
@@ -49,7 +51,7 @@ public class Order {
 	State getOrderState() {
 		return orderState;
 	}
-	
+
 	private void requireState(State... allowedStates) {
 		for (State allowedState : allowedStates) {
 			if (orderState == allowedState)
@@ -57,8 +59,8 @@ public class Order {
 		}
 
 		throw new OrderStateException("order should be in state "
-				+ allowedStates + " to perform required  operation, but is in "
-				+ orderState);
+		                              + allowedStates + " to perform required  operation, but is in "
+		                              + orderState);
 
 	}
 
